@@ -15,57 +15,35 @@ const Featured = () => {
       try {
         const ordersRef = collection(db, "orders");
 
-        // Calculate the start and end timestamps for today
+        // Today range
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const tomorrow = new Date(today);
         tomorrow.setDate(today.getDate() + 1);
 
-        // Create a query to filter orders made today
+        // Today's orders
         const todayQuery = query(
           ordersRef,
           where("timeStamp", ">=", today),
           where("timeStamp", "<", tomorrow)
         );
+        const todaySnapshot = await getDocs(todayQuery);
 
-        const querySnapshot = await getDocs(todayQuery);
+        let revenueToday = 0;
+        todaySnapshot.forEach((doc) => {
+          const { totalPrice } = doc.data();
+          if (!isNaN(totalPrice)) revenueToday += parseFloat(totalPrice);
+        });
+        setTotalRevenueToday(revenueToday);
 
-        if (querySnapshot.empty) {
-          console.log("There are no orders made today.");
-        } else {
-          let totalRevenueToday = 0;
-
-          querySnapshot.forEach((doc) => {
-            const orderData = doc.data();
-
-            // Check if the totalPrice field is a valid number
-            if (!isNaN(orderData.totalPrice)) {
-              totalRevenueToday += parseFloat(orderData.totalPrice);
-            }
-          });
-
-          setTotalRevenueToday(totalRevenueToday);
-        }
-
-        // Create a query to fetch all documents in the "orders" collection
-        const allOrdersQuery = query(ordersRef);
-
-        const allOrdersSnapshot = await getDocs(allOrdersQuery);
-
-        if (!allOrdersSnapshot.empty) {
-          let totalRevenueAllTime = 0;
-
-          allOrdersSnapshot.forEach((doc) => {
-            const orderData = doc.data();
-
-            // Check if the totalPrice field is a valid number
-            if (!isNaN(orderData.totalPrice)) {
-              totalRevenueAllTime += parseFloat(orderData.totalPrice);
-            }
-          });
-
-          setTotalRevenueAllTime(totalRevenueAllTime);
-        }
+        // All-time orders
+        const allOrdersSnapshot = await getDocs(ordersRef);
+        let revenueAllTime = 0;
+        allOrdersSnapshot.forEach((doc) => {
+          const { totalPrice } = doc.data();
+          if (!isNaN(totalPrice)) revenueAllTime += parseFloat(totalPrice);
+        });
+        setTotalRevenueAllTime(revenueAllTime);
       } catch (error) {
         console.error("Error fetching total revenue and sales:", error);
       }
@@ -74,8 +52,10 @@ const Featured = () => {
     fetchTotalRevenueAndSales();
   }, []);
 
-  // Calculate the percentage based on the text
-  const percentageToday = (totalRevenueToday / totalRevenueAllTime) * 100;
+  const percentageToday =
+    totalRevenueAllTime > 0
+      ? (totalRevenueToday / totalRevenueAllTime) * 100
+      : 0;
 
   return (
     <div className="featured">
@@ -92,10 +72,16 @@ const Featured = () => {
           />
         </div>
         <p className="title">Total sales made today</p>
-        <p className="amount">{`$${totalRevenueToday}`}</p>
-        <p className="desc">{`Total Revenue (All Time): $${totalRevenueAllTime}`}</p>
+        <p className="amount">{`RM ${totalRevenueToday.toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`}</p>
+        <p className="desc">{`Total Revenue: RM ${totalRevenueAllTime.toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`}</p>
         <div className="summary">
-            Total revenue is the amount of sales, without accounting the expenses for net profit.
+          Total revenue is the amount of sales, without accounting for expenses or net profit.
         </div>
       </div>
     </div>
@@ -103,4 +89,3 @@ const Featured = () => {
 };
 
 export default Featured;
-

@@ -47,15 +47,18 @@ const OrderTable = () => {
       renderCell: (params) => {
         return (
           <div className="cellAction">
-            {/* <Link to="/users/test" style={{ textDecoration: "none" }}> */}
-            {/* </Link> */}
-            <div className="viewButton">View</div>
+            {/* View button is hidden but present */}
+            <div className="viewButton" style={{ display: "none" }}>
+              View
+            </div>
+
             <div
               className="deleteButton"
               onClick={() => handleDelete(params.row.id)}
             >
               Delete
             </div>
+
             <Link
               to={`/order/edit/${params.row.id}`}
               style={{ textDecoration: "none" }}
@@ -76,7 +79,7 @@ const OrderTable = () => {
           if (params.row.products && Array.isArray(params.row.products)) {
             return params.row.products.map((product) => product[column.field]);
           }
-          return ""; // Return an empty string if "products" is not defined or not an array
+          return ""; // Return empty string if "products" is undefined or not array
         },
       };
     }
@@ -85,9 +88,7 @@ const OrderTable = () => {
 
   return (
     <div className="datatable">
-      <div className="tableTitle">
-        Order List
-      </div>
+      <div className="tableTitle">Order List</div>
       <DataGrid
         className="datagrid"
         rows={data}

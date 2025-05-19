@@ -1,208 +1,203 @@
-.app.dark{
-    background-color: #222;
+.app.dark {
+  background-color: #222;
+  color: rgb(156, 156, 156);
+  overflow-x: auto; /* enable horizontal scroll */
+
+  .chartGrid {
+    stroke: rgba(228, 228, 228, 0.219);
+  }
+
+  .table {
+    background-color: #111;
+
+    .tableCell {
+      color: gray;
+    }
+  }
+
+  .navbar {
+    color: #999;
+    border-bottom: 0.5px solid #333;
+  }
+
+  .search {
+    border-radius: 5px;
+    border-color: gray;
+  }
+
+  .sidebar {
+    background-color: #111;
+    border-right: 0.5px solid #333;
+
+    .top {
+      color: #999;
+    }
+
+    hr {
+      border-color: #333;
+    }
+
+    ul {
+      li {
+        &:hover {
+          background-color: #333;
+        }
+      }
+    }
+  }
+
+  .datatable {
+    .datagrid {
+      color: gray;
+      border: none;
+
+      .viewButton {
+        color: rgb(8, 218, 255);
+        border: none;
+      }
+      .deleteButton {
+        color: red;
+        border: none;
+      }
+      .editButton {
+        color: #ff7b00;
+        border: none;
+      }
+      .cellWithStatus {
+        color: green;
+        border: none;
+      }
+    }
+  }
+
+  input {
+    background-color: transparent;
     color: rgb(156, 156, 156);
+  }
 
-    .chartGrid{
-        stroke: rgba(228, 228, 228, 0.219)
-    }
-
-    .table{
-        background-color: #111;
-
-        .tableCell{
-            color: gray;
-        }
-    }
-
-    .navbar{
-        color: #999;
-        border-bottom: 0.5px solid #333;
-    }
-
-    .search{
-        border-radius: 5px;
+  .login {
+    form {
+      input {
         border-color: gray;
-    }
-
-    .sidebar{
-        background-color: #111;
-        border-right: 0.5px solid #333;
-
-        .top{
-            color: #999;
-        }
-
-        hr{
-            border-color: #333;
-        }
-
-        ul{
-
-            li{
-                &:hover{
-                    background-color: #333;
-                }
-
-            }
-        }
-    }
-
-    .datatable{
-        .datagrid {
-            color: gray;
-            border: none;
-
-            .viewButton{
-                color: rgb(8, 218, 255);
-                border: none;
-            }
-            .deleteButton{
-                color: red;
-                border: none;
-            }
-            .editButton{
-                color: #ff7b00;
-                border: none;
-            }
-            .cellWithStatus {
-                color: green;
-                border: none;
-            }
-        }
-    }
-
-    input {
+        color: white;
         background-color: transparent;
+      }
     }
+  }
 
-    .login{
-         form{
-             input{
-                 border-color: gray;
-                 color: white;
-             }
-         }
-    }
+  .new {
+    width: 100%;
+    display: flex;
 
-        .new {
-            width: 100%;
-            display: flex;
+    .newContainer {
+      flex: 6;
+      position: relative; /* to keep goBack button absolute relative */
 
-            .newContainer {
-                flex: 6;
+      .goBack {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        position: absolute;
+        right: 25px;
+        top: 55px;
 
-                .goBack {
-                        background-color: #007bff;
-                        color: white;
-                        padding: 10px 20px;
-                        border-radius: 5px;
-                        border: none;
-                        cursor: pointer;
-                        position: absolute;
-                        right: 25px;
-                        top: 55px;
-                        /* Adjust this value as needed */
-
-                        &:hover {
-                            background-color: #0069d9;
-                        }
-                    }
-
-                .top,
-                .bottom {
-                    -webkit-box-shadow: 2px 4px 10px 1px rgba(255, 255, 255, 0.47);
-                    box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
-                    padding: 10px;
-                    margin: 20px;
-                    display: flex;
-
-                    h1 {
-                        color: lightgray;
-                        font-size: 20px;
-                    }
-
-                    .left {
-                        flex: 1;
-                        text-align: center;
-
-                        img {
-                            width: 100px;
-                            height: 100px;
-                            border-radius: 50%;
-                            object-fit: cover;
-                        }
-
-                        .edit-img {
-                            // Increase specificity here
-                            width: 350px;
-                            height: auto;
-                            object-fit: cover;
-                        }
-                    }
-
-                    .right {
-                        flex: 2;
-
-                        form {
-                            display: flex;
-                            flex-wrap: wrap;
-                            gap: 40px;
-                            justify-content: space-around;
-
-                            .formInput {
-                                width: 40%;
-
-                                label {
-                                    display: flex;
-                                    align-items: center;
-                                    gap: 10px;
-
-                                    .icon {
-                                        cursor: pointer;
-                                    }
-                                }
-
-                                input {
-                                    width: 100%;
-                                    padding: 5px;
-                                    border: none;
-                                    border-bottom: 1px solid gray;
-                                    background-color: #222;
-                                    /* Dark background color */
-                                    color: #fff;
-                                    /* White text color */
-                                }
-
-                                select {
-                                    // Your styles for the select input go here
-                                    width: 100%;
-                                    padding: 5px;
-                                    border-bottom: 1px solid gray;
-                                    background-color: #242222;
-                                    /* Dark background color */
-                                    color: #ffffff;
-                                    /* White text color */
-                                }
-                            }
-
-                            button {
-                                width: 150px;
-                                padding: 10px;
-                                border: none;
-                                background-color: teal;
-                                color: white;
-                                font-weight: bold;
-                                cursor: pointer;
-                                margin-top: 10px;
-
-                                &:disabled {
-                                    background-color: rgba(3, 92, 92, 0.322);
-                                    cursor: not-allowed;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        &:hover {
+          background-color: #0069d9;
         }
+      }
+
+      .top,
+      .bottom {
+        -webkit-box-shadow: 2px 4px 10px 1px rgba(255, 255, 255, 0.47);
+        box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+        padding: 10px;
+        margin: 20px;
+        display: flex;
+
+        h1 {
+          color: lightgray;
+          font-size: 20px;
+        }
+
+        .left {
+          flex: 1;
+          text-align: center;
+
+          img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+          }
+
+          .edit-img {
+            width: 350px;
+            height: auto;
+            object-fit: cover;
+          }
+        }
+
+        .right {
+          flex: 2;
+
+          form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            justify-content: space-around;
+
+            .formInput {
+              width: 40%;
+
+              label {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+
+                .icon {
+                  cursor: pointer;
+                }
+              }
+
+              input {
+                width: 100%;
+                padding: 5px;
+                border: none;
+                border-bottom: 1px solid gray;
+                background-color: #222;
+                color: #fff;
+              }
+
+              select {
+                width: 100%;
+                padding: 5px;
+                border-bottom: 1px solid gray;
+                background-color: #242222;
+                color: #fff;
+              }
+            }
+
+            button {
+              width: 150px;
+              padding: 10px;
+              border: none;
+              background-color: teal;
+              color: white;
+              font-weight: bold;
+              cursor: pointer;
+              margin-top: 10px;
+
+              &:disabled {
+                background-color: rgba(3, 92, 92, 0.322);
+                cursor: not-allowed;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }

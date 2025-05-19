@@ -14,13 +14,13 @@ import { Link } from "react-router-dom";
 const Widget = ({ type }) => {
   const [amount, setAmount] = useState(null);
   const [diff, setDiff] = useState(null);
-  let data = null; // Initialize data to null
+  let data = null;
 
   switch (type) {
     case "sales":
       data = {
         title: "SALES",
-        isMoney: true,
+        isMoney: false, // no RM for sales count
         link: "See all sales",
         query: "orders",
         icon: <ShowChartIcon className="icon" />,
@@ -82,7 +82,6 @@ const Widget = ({ type }) => {
         let newDiff;
 
         if (type === "earning") {
-          // Handle "earning" case
           const lastMonthEarnings = lastMonthData.docs.reduce(
             (total, doc) => total + doc.data().totalPrice,
             0
@@ -96,15 +95,8 @@ const Widget = ({ type }) => {
           newAmount = lastMonthEarnings;
           newDiff =
             ((lastMonthEarnings - prevMonthEarnings) / prevMonthEarnings) * 100;
-        } else if (type === "sales") {
-          // Handle "sales" case
-          newAmount = lastMonthData.docs.length;
-          newDiff =
-            ((lastMonthData.docs.length - prevMonthData.docs.length) /
-              prevMonthData.docs.length) *
-            100;
         } else {
-          // Handle other cases here
+          // sales, orders, users
           newAmount = lastMonthData.docs.length;
           newDiff =
             ((lastMonthData.docs.length - prevMonthData.docs.length) /
@@ -118,23 +110,29 @@ const Widget = ({ type }) => {
     };
 
     fetchData();
-  }, [data, type]); // Include 'type' in the dependency array
+  }, [data, type]);
 
   return (
     <div className="widget">
       <div className="left">
         <span className="title">{data.title}</span>
         <span className="counter">
-          {data.isMoney && "$"} {amount}
+          {data.isMoney
+            ? `RM ${amount}`
+            : type === "sales"
+            ? `${amount} Sales`
+            : amount}
         </span>
-        <Link to={`/${data.query}`}>
-          <span className="link">See all {data.link}</span>
-        </Link>
+        {data.link && (
+          <Link to={`/${data.query}`}>
+            <span className="link">{data.link}</span>
+          </Link>
+        )}
       </div>
       <div className="right">
         <div className={`percentage ${diff < 0 ? "negative" : "positive"}`}>
           {diff < 0 ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
-          {diff} %
+          {diff?.toFixed(2)}%
         </div>
         {data.icon}
       </div>

@@ -21,22 +21,12 @@ const Chart = () => {
         const ordersRef = collection(db, "orders");
         const today = new Date();
 
-        // Calculate the start and end timestamps for each month within the previous 6 months
-        const data = [];
+        const tempData = [];
 
         for (let i = 0; i < 6; i++) {
-          const startDate = new Date(
-            today.getFullYear(),
-            today.getMonth() - i,
-            1
-          );
-          const endDate = new Date(
-            today.getFullYear(),
-            today.getMonth() - i + 1,
-            0
-          );
+          const startDate = new Date(today.getFullYear(), today.getMonth() - i, 1);
+          const endDate = new Date(today.getFullYear(), today.getMonth() - i + 1, 0);
 
-          // Create a query to filter orders made in the current month
           const monthQuery = query(
             ordersRef,
             where("timeStamp", ">=", startDate),
@@ -50,24 +40,22 @@ const Chart = () => {
           if (!querySnapshot.empty) {
             querySnapshot.forEach((doc) => {
               const orderData = doc.data();
-
-              // Check if the totalPrice field is a valid number
               if (!isNaN(orderData.totalPrice)) {
                 monthlyRevenue += parseFloat(orderData.totalPrice);
               }
             });
           }
 
-          data.push({
+          tempData.unshift({
             name: startDate.toLocaleDateString("en-US", {
               month: "short",
               year: "numeric",
             }),
-            revenue: monthlyRevenue.toFixed(2), // Format revenue to 2 decimal places with a dollar sign
+            revenue: Number(monthlyRevenue.toFixed(2)), // Keep as number for chart
           });
         }
 
-        setData(data);
+        setData(tempData);
       } catch (error) {
         console.error("Error fetching revenue data:", error);
       }
@@ -94,7 +82,7 @@ const Chart = () => {
           <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
           <XAxis dataKey="name" stroke="gray" />
           <YAxis />
-          <Tooltip formatter={(value) => `$${value}`} />
+          <Tooltip formatter={(value) => `RM ${value}`} />
           <Area
             type="monotone"
             dataKey="revenue"
