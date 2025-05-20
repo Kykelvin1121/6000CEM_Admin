@@ -1,43 +1,30 @@
+// =======================
+// User Inputs (Create)
+// =======================
 export const userInputs = [
   {
     id: "username",
     label: "Username",
     type: "text",
-    placeholder: "john_doe",
-  },
-  {
-    id: "displayName",
-    label: "Name and surname",
-    type: "text",
-    placeholder: "John Doe",
+    placeholder: "Enter username",
   },
   {
     id: "email",
     label: "Email",
     type: "mail",
-    placeholder: "john_doe@gmail.com",
+    placeholder: "Enter email",
   },
   {
     id: "phone",
     label: "Phone",
     type: "text",
-    placeholder: "+1 234 567 89",
+    placeholder: "+60",
   },
   {
     id: "password",
     label: "Password",
     type: "password",
-  },
-  {
-    id: "address",
-    label: "Address",
-    type: "text",
-    placeholder: "Elton St. 216 NewYork",
-  },
-  {
-    id: "country",
-    label: "Country",
-    type: "text",
+    placeholder: "Enter password",
   },
   {
     id: "role",
@@ -50,43 +37,47 @@ export const userInputs = [
     ],
     placeholder: "Select Role",
   },
+  {
+    id: "address",
+    label: "Address",
+    type: "text",
+    placeholder: "Enter address",
+  },
 ];
 
+// =======================
+// User Update (Edit)
+// =======================
 export const userUpdate = [
   {
     id: "username",
     label: "Username",
     type: "text",
-  },
-  {
-    id: "displayName",
-    label: "Name and surname",
-    type: "text",
+    placeholder: "Enter username",
   },
   {
     id: "email",
     label: "Email",
     type: "mail",
+    placeholder: "Enter email",
   },
   {
     id: "phoneNumber",
     label: "Phone",
     type: "text",
+    placeholder: "+60",
   },
   {
     id: "password",
     label: "Password",
     type: "password",
+    placeholder: "Enter new password",
   },
   {
     id: "address",
     label: "Address",
     type: "text",
-  },
-  {
-    id: "country",
-    label: "Country",
-    type: "text",
+    placeholder: "Enter address",
   },
   {
     id: "role",
@@ -101,18 +92,21 @@ export const userUpdate = [
   },
 ];
 
+// =======================
+// Product Inputs (Create)
+// =======================
 export const productInputs = [
   {
     id: "title",
     label: "Title",
     type: "text",
-    placeholder: "Apple Macbook Pro",
+    placeholder: "Apple MacBook Pro",
   },
   {
     id: "desc",
     label: "Description",
     type: "text",
-    placeholder: "Description",
+    placeholder: "Enter product description",
   },
   {
     id: "wh1qty",
@@ -135,8 +129,8 @@ export const productInputs = [
   {
     id: "price",
     label: "Price",
-    type: "number", // Change to "number"
-    placeholder: "0", // You can change the placeholder if needed
+    type: "number",
+    placeholder: "0",
   },
   {
     id: "status",
@@ -150,51 +144,68 @@ export const productInputs = [
   },
 ];
 
+// =======================
+// Product Update (Edit)
+// =======================
 export const productUpdate = [
   {
     id: "title",
     label: "Title",
     type: "text",
+    placeholder: "Enter product title",
   },
   {
     id: "desc",
     label: "Description",
     type: "text",
+    placeholder: "Enter description",
   },
   {
     id: "wh1qty",
     label: "Warehouse 1 Unit",
     type: "number",
+    placeholder: "0",
   },
   {
     id: "wh2qty",
     label: "Warehouse 2 Unit",
     type: "number",
+    placeholder: "0",
   },
   {
     id: "wh3qty",
     label: "Warehouse 3 Unit",
     type: "number",
+    placeholder: "0",
   },
   {
     id: "price",
     label: "Price",
     type: "number",
+    placeholder: "0",
   },
   {
     id: "status",
     label: "Status",
     type: "select",
-    options: ["Active", "Disabled"], // Provide an array of values
+    options: [
+      { text: "Active", value: "active" },
+      { text: "Disabled", value: "disabled" },
+    ],
     placeholder: "Select Status",
-  }
+  },
 ];
 
+// =======================
+// Order Update (Edit)
+// =======================
 export const orderUpdate = [
   {
     id: "userId",
     label: "Customer ID",
-    readOnly: true, // added readOnly property
+    type: "text",
+    readOnly: true,
+    placeholder: "Auto-generated",
   },
   {
     id: "status",
@@ -202,17 +213,22 @@ export const orderUpdate = [
     type: "select",
     options: [
       { text: "Processing", value: "processing" },
-      { text: "Shipped", value: "shipped" },
-      { text: "Delivered", value: "delivered" },
+      { text: "Delivering", value: "delivering" },
+      { text: "Completed", value: "completed" },
     ],
+    placeholder: "Select status",
   },
   {
-    id: "selectedWarehouse",
-    label: "Warehouse Selected",
+    id: "shippingAddress",
+    label: "Shipping Address",
+    type: "text",
+    placeholder: "Enter shipping address",
   },
   {
     id: "totalPrice",
     label: "Total Paid",
+    type: "text",
     readOnly: true,
-  }
-]
+    placeholder: "Auto-calculated",
+  },
+];

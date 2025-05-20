@@ -1,9 +1,8 @@
 import "./navbar.scss";
-import SearchIcon from "@mui/icons-material/Search";
+import profileIcon from "../../images/pfpicon.png";
 import { useContext, useEffect, useState } from "react";
 import { db } from "../../firebase";
 import { doc, getDoc } from "firebase/firestore";
-import profileIcon from "../../images/pfpicon.png";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -34,10 +33,11 @@ const Navbar = () => {
   return (
     <div className="navbar">
       <div className="wrapper">
-        <div className="search">
-          <input type="text" placeholder="Search..." />
-          <SearchIcon className="icon" />
+        {/* Replace search bar with title */}
+        <div className="dashboardTitle">
+          <h1>DashBoard</h1>
         </div>
+
         {userData && (
           <div className="userProfile" onClick={goToProfile}>
             <img

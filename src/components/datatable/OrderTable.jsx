@@ -66,11 +66,27 @@ const OrderTable = () => {
     },
   ];
 
-  // Hide warehouse column and add shippingAddress
+  // Custom columns: filter out hidden, override values, and add shippingAddress
   const customOrderColumns = orderColumns
     .map((col) => {
-      if (col.field === "warehouse") {
+      if (col.field === "selectedWarehouse") {
         return { ...col, hide: true };
+      }
+      return col;
+    })
+    .filter((col) => !col.hide) // filter out hidden columns
+    .map((col) => {
+      if (col.field === "title" || col.field === "qty") {
+        return {
+          ...col,
+          valueGetter: (params) => {
+            const products = params.row.products;
+            if (Array.isArray(products)) {
+              return products.map((product) => product[col.field]).join(", ");
+            }
+            return "";
+          },
+        };
       }
       return col;
     })
@@ -88,22 +104,7 @@ const OrderTable = () => {
           return "";
         },
       },
-    ])
-    .map((column) => {
-      if (column.field === "title" || column.field === "qty") {
-        return {
-          ...column,
-          valueGetter: (params) => {
-            const products = params.row.products;
-            if (Array.isArray(products)) {
-              return products.map((product) => product[column.field]).join(", ");
-            }
-            return "";
-          },
-        };
-      }
-      return column;
-    });
+    ]);
 
   return (
     <div className="datatable">

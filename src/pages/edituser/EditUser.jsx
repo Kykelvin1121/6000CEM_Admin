@@ -72,29 +72,28 @@ const EditUser = ({ title }) => {
               alt={userData?.username || "User Profile"}
               className="item avatar"
             />
+            {/* Upload image button moved here */}
+            <div className="formInput uploadImage">
+              <label htmlFor="file">
+                Image: <DriveFolderUploadOutlinedIcon className="icon" />
+              </label>
+              <input
+                type="file"
+                id="file"
+                onChange={(e) =>
+                  setUserData({ ...userData, file: e.target.files[0] })
+                }
+                style={{ display: "none" }}
+              />
+            </div>
           </div>
           <div className="right">
             <form onSubmit={handleAdd}>
-              <div className="formInput">
-                <label htmlFor="file">
-                  Image: <DriveFolderUploadOutlinedIcon className="icon" />
-                </label>
-                <input
-                  type="file"
-                  id="file"
-                  onChange={(e) =>
-                    setUserData({ ...userData, file: e.target.files[0] })
-                  }
-                  style={{ display: "none" }}
-                />
-              </div>
+              {/* Removed image upload input from here */}
 
               {userUpdate
                 // filter out name, surname, country if somehow still present
-                .filter(
-                  (input) =>
-                    !["name", "surname", "country"].includes(input.id)
-                )
+                .filter((input) => !["name", "surname", "country"].includes(input.id))
                 .map((input) => (
                   <div className="formInput" key={input.id}>
                     <label>{input.label}</label>
@@ -103,11 +102,7 @@ const EditUser = ({ title }) => {
                         className="select"
                         id={input.id}
                         onChange={handleInput}
-                        value={
-                          userData && userData[input.id]
-                            ? userData[input.id]
-                            : ""
-                        }
+                        value={userData && userData[input.id] ? userData[input.id] : ""}
                       >
                         <option value="" disabled>
                           Select {input.label}
@@ -125,20 +120,14 @@ const EditUser = ({ title }) => {
                         type={input.type}
                         placeholder={input.placeholder}
                         onChange={handleInput}
-                        value={
-                          userData && userData[input.id]
-                            ? userData[input.id]
-                            : ""
-                        }
+                        value={userData && userData[input.id] ? userData[input.id] : ""}
                       />
                     )}
                   </div>
                 ))}
 
               <button
-                disabled={
-                  userData && userData.per !== null && userData.per < 100
-                }
+                disabled={userData && userData.per !== null && userData.per < 100}
                 type="submit"
               >
                 Update

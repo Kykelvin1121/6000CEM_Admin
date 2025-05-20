@@ -23,7 +23,6 @@ const ProductTable = () => {
             (doc.data().wh2qty || 0) +
             (doc.data().wh3qty || 0),
         }));
-
         setProducts(products);
       });
 
@@ -69,6 +68,14 @@ const ProductTable = () => {
     },
   ];
 
+  // Mark warehouse quantity columns as hidden
+  const customProductColumns = productColumns.map((col) => {
+    if (["wh1qty", "wh2qty", "wh3qty"].includes(col.field)) {
+      return { ...col, hide: true }; // ✅ keep it but hide it
+    }
+    return col;
+  });
+
   return (
     <div className="datatable">
       <div className="datatableTitle">
@@ -80,7 +87,7 @@ const ProductTable = () => {
       <DataGrid
         className="datagrid"
         rows={products}
-        columns={productColumns.concat(actionColumn)}
+        columns={customProductColumns.concat(actionColumn)}
         pageSize={9}
         rowsPerPageOptions={[9]}
         checkboxSelection

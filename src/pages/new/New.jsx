@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const New = ({ inputs, title }) => {
-  const [file, setFile] = useState("");
+  const [file, setFile] = useState(null);
   const [data, setData] = useState({});
   const [per, setPerc] = useState(null);
   const navigate = useNavigate();
@@ -19,9 +19,7 @@ const New = ({ inputs, title }) => {
   useEffect(() => {
     const uploadFile = () => {
       const name = new Date().getTime() + file.name;
-
-      console.log(name);
-      const storageRef = ref(storage, file.name);
+      const storageRef = ref(storage, name);
       const uploadTask = uploadBytesResumable(storageRef, file);
 
       uploadTask.on(
@@ -29,7 +27,6 @@ const New = ({ inputs, title }) => {
         (snapshot) => {
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log("Upload is " + progress + "% done");
           setPerc(progress);
           switch (snapshot.state) {
             case "paused":
@@ -44,15 +41,20 @@ const New = ({ inputs, title }) => {
         },
         (error) => {
           console.log(error);
+          toast.error("Image upload failed");
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             setData((prev) => ({ ...prev, img: downloadURL }));
+            toast.success("Image uploaded successfully");
           });
         }
       );
     };
-    file && uploadFile();
+
+    if (file) {
+      uploadFile();
+    }
   }, [file]);
 
   const handleInput = (e) => {
@@ -64,8 +66,9 @@ const New = ({ inputs, title }) => {
 
   const handleAdd = async (e) => {
     e.preventDefault();
-    let isEmptyField = false; // Flag to check if any field is empty
 
+    // Validate all inputs from props 'inputs'
+    let isEmptyField = false;
     for (const input of inputs) {
       const key = input.id;
       if (!data[key]) {
@@ -75,23 +78,31 @@ const New = ({ inputs, title }) => {
     }
 
     if (isEmptyField) {
-      // Display a toast message
-      toast.error("Please fill in all fields");
-    } else {
-      try {
-        const res = await createUserWithEmailAndPassword(
-          auth,
-          data.email,
-          data.password
-        );
-        await setDoc(doc(db, "users", res.user.uid), {
-          ...data,
-          timeStamp: serverTimestamp(),
-        });
-        navigate(-1);
-      } catch (err) {
-        console.log(err);
-      }
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    // Prevent submitting if an upload is in progress
+    if (file && per !== null && per < 100) {
+      toast.error("Please wait for the image to finish uploading");
+      return;
+    }
+
+    try {
+      const res = await createUserWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
+      await setDoc(doc(db, "users", res.user.uid), {
+        ...data,
+        timeStamp: serverTimestamp(),
+      });
+      toast.success("User created successfully");
+      navigate(-1);
+    } catch (err) {
+      console.log(err);
+      toast.error(err.message);
     }
   };
 
@@ -109,25 +120,26 @@ const New = ({ inputs, title }) => {
               src={
                 file
                   ? URL.createObjectURL(file)
+                  : data.img
+                  ? data.img
                   : "https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg"
               }
               alt=""
             />
+            <div className="uploadButtonWrapper">
+              <label htmlFor="file" className="uploadLabel">
+                Upload Image <DriveFolderUploadOutlinedIcon className="icon" />
+              </label>
+              <input
+                type="file"
+                id="file"
+                onChange={(e) => setFile(e.target.files[0])}
+                style={{ display: "none" }}
+              />
+            </div>
           </div>
           <div className="right">
             <form onSubmit={handleAdd}>
-              <div className="formInput">
-                <label htmlFor="file">
-                  Image: <DriveFolderUploadOutlinedIcon className="icon" />
-                </label>
-                <input
-                  type="file"
-                  id="file"
-                  onChange={(e) => setFile(e.target.files[0])}
-                  style={{ display: "none" }}
-                />
-              </div>
-
               {inputs.map((input) => (
                 <div className="formInput" key={input.id}>
                   <label>{input.label}</label>
@@ -136,7 +148,7 @@ const New = ({ inputs, title }) => {
                       className="formInput"
                       id={input.id}
                       onChange={handleInput}
-                      value={data[input.id]} // Use 'value' to set the selected option
+                      value={data[input.id] || ""}
                     >
                       <option value="" disabled>
                         Select {input.label}
@@ -154,13 +166,14 @@ const New = ({ inputs, title }) => {
                       type={input.type}
                       placeholder={input.placeholder}
                       onChange={handleInput}
-                      value={data[input.id]} // Use 'value' to set the input value
+                      value={data[input.id] || ""}
                     />
                   )}
                 </div>
               ))}
-              <button disabled={per !== null && per < 100} type="submit">
-                Send
+
+              <button disabled={file && per !== null && per < 100} type="submit">
+                Create
               </button>
             </form>
           </div>

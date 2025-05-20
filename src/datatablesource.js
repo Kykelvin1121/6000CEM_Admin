@@ -96,21 +96,29 @@ export const productColumns = [
         field: "quantity",
         headerName: "Total Quantity",
         width: 100,
+        hide: true,
+
     },
     {
         field: "wh1qty",
         headerName: "WH1 Quantity",
         width: 100,
+        hide: true,
+
     },
     {
         field: "wh2qty",
         headerName: "WH2 Quantity",
         width: 100,
+        hide: true,
+
     },
     {
         field: "wh3qty",
         headerName: "WH3 Quantity",
         width: 100,
+        hide: true,
+
     },
     {
         field: "status",
@@ -149,6 +157,7 @@ export const orderColumns = [
         field: "selectedWarehouse",
         headerName: "Warehouse",
         width: 120,
+        hide: true,
     },
     {
         field: "userId",

@@ -12,26 +12,14 @@
     align-items: center;
     justify-content: space-between;
 
-    .search {
-      display: flex;
-      align-items: center;
-      border: 0.5px solid lightgray;
-      padding: 3px;
+    /* Remove or comment out .search styles since search is removed */
 
-      input {
-        border: none;
-        outline: none;
-        background-color: transparent;
-
-        &::placeholder {
-          font-size: 12px;
-        }
-      }
-
-      .icon {
-        font-size: 18px;
-        color: gray;
-      }
+    .dashboardTitle {
+      color: #167AC0; 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      user-select: none; /* Optional: prevent text selection */
     }
 
     .userProfile {

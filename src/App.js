@@ -150,7 +150,7 @@ function App() {
                   <EditProduct />
                 </RoleAuth>
               </RequireAuth>
-            } />
+            } />   
             <Route path="order/edit/:paramId" element={
               <RequireAuth>
                 <RoleAuth userRole={userRole} allowedRoles={["super_admin", "admin"]}>
