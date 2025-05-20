@@ -69,7 +69,7 @@ export const userUpdate = [
     type: "mail",
   },
   {
-    id: "phone",
+    id: "phoneNumber",
     label: "Phone",
     type: "text",
   },

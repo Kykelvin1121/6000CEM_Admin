@@ -2,36 +2,36 @@ import "./single.scss";
 import { useState, useEffect } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
-import Chart from "../../components/chart/Chart";
-import List from "../../components/table/Table";
 import { useParams, useNavigate } from "react-router-dom";
 import { db } from "../../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import profileIcon from "../../images/pfpicon.png";
 
 const Single = () => {
-   const { userId } = useParams();
-   const navigate = useNavigate();
-   const [userData, setUserData] = useState(null);
+  const { userId } = useParams();
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState(null);
 
-   useEffect(() => {
-     const fetchUserData = async () => {
-       const docRef = doc(db, "users", userId);
-       const docSnap = await getDoc(docRef);
-       if (docSnap.exists()) {
-         const userData = docSnap.data();
-         setUserData(userData); // Store the fetched data in state
-       } else {
-         // Handle the case where the document doesn't exist
-       }
-     };
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const docRef = doc(db, "users", userId);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setUserData(docSnap.data());
+      } else {
+        // Handle user not found, maybe redirect or show message
+      }
+    };
 
-     fetchUserData();
-   }, [userId]);
-
+    fetchUserData();
+  }, [userId]);
 
   const goBack = () => {
-    navigate(-1); // This will navigate back to the previous page
+    navigate(-1);
+  };
+
+  const goToEdit = () => {
+    navigate(`/users/edit/${userId}`);
   };
 
   return (
@@ -45,9 +45,15 @@ const Single = () => {
             Go Back
           </button>
           <div className="left">
-            <div className="editButton">Edit</div>
+            <div
+              className="editButton"
+              onClick={goToEdit}
+              style={{ cursor: "pointer" }}
+            >
+              Edit
+            </div>
             <h1 className="title">Information</h1>
-            {userData && ( // Check if userData is available before rendering
+            {userData && (
               <div className="item">
                 <img
                   src={userData.img ? userData.img : profileIcon}
@@ -62,15 +68,15 @@ const Single = () => {
                   </div>
                   <div className="detailItem">
                     <span className="itemKey">Phone:</span>
-                    <span className="itemValue">{userData.phone}</span>
+                    <span className="itemValue">{userData.phoneNumber}</span>
                   </div>
                   <div className="detailItem">
                     <span className="itemKey">Address:</span>
                     <span className="itemValue">{userData.address}</span>
                   </div>
                   <div className="detailItem">
-                    <span className="itemKey">Country:</span>
-                    <span className="itemValue">{userData.country}</span>
+                    <span className="itemKey">Roles:</span>
+                    <span className="itemValue">{userData.role}</span>
                   </div>
                 </div>
               </div>

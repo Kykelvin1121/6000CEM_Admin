@@ -7,7 +7,7 @@ import { db } from "../../firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import profileIcon from "../../images/pfpicon.png";
 import DriveFolderUploadOutlinedIcon from "@mui/icons-material/DriveFolderUploadOutlined";
-import { userUpdate } from "../../formSource";
+import { userUpdate } from "../../formSource"; // adjust path if needed
 import { toast } from "react-toastify";
 
 const EditUser = ({ title }) => {
@@ -20,47 +20,38 @@ const EditUser = ({ title }) => {
       const docRef = doc(db, "users", userId);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        const userData = docSnap.data();
-        setUserData(userData); // Store the fetched data in state
+        setUserData(docSnap.data());
       } else {
-        // Handle the case where the document doesn't exist
+        // handle user not found case
       }
     };
-
     fetchUserData();
   }, [userId]);
 
-  // Define a handler function to update the form data
   const handleInput = (e) => {
-    // Update the userData state with the new value
     setUserData({
       ...userData,
       [e.target.id]: e.target.value,
     });
   };
 
-  // Define a handler function for form submission
   const handleAdd = async (e) => {
     e.preventDefault();
-    // Add code to submit the updated user data to your database
     if (userData && userId) {
       try {
         const userDocRef = doc(db, "users", userId);
-        // Update the document with the new user data
         await updateDoc(userDocRef, userData);
         toast.success("User info updated");
-        // You can also navigate to another page or perform other actions here if needed.
       } catch (error) {
         console.error("Error updating user data:", error);
         toast.error("Error updating user info");
-        // Handle any errors that occur during the update.
       }
     }
     navigate(-1);
   };
 
   const goBack = () => {
-    navigate(-1); // This will navigate back to the previous page
+    navigate(-1);
   };
 
   return (
@@ -78,7 +69,7 @@ const EditUser = ({ title }) => {
           <div className="left">
             <img
               src={userData?.img || profileIcon}
-              alt={userData?.name || "User Profile"}
+              alt={userData?.username || "User Profile"}
               className="item avatar"
             />
           </div>
@@ -98,41 +89,52 @@ const EditUser = ({ title }) => {
                 />
               </div>
 
-              {userUpdate.map((input) => (
-                <div className="formInput" key={input.id}>
-                  <label>{input.label}</label>
-                  {input.type === "select" ? (
-                    <select
-                      className="select"
-                      id={input.id}
-                      onChange={handleInput}
-                      value={
-                        userData && userData[input.id] ? userData[input.id] : ""
-                      } // Check if userData and userData[input.id] are not null
-                    >
-                      <option value="" disabled>
-                        Select {input.label}
-                      </option>
-                      {input.options.map((option, index) => (
-                        <option key={index} value={option.value}>
-                          {option.text}
+              {userUpdate
+                // filter out name, surname, country if somehow still present
+                .filter(
+                  (input) =>
+                    !["name", "surname", "country"].includes(input.id)
+                )
+                .map((input) => (
+                  <div className="formInput" key={input.id}>
+                    <label>{input.label}</label>
+                    {input.type === "select" ? (
+                      <select
+                        className="select"
+                        id={input.id}
+                        onChange={handleInput}
+                        value={
+                          userData && userData[input.id]
+                            ? userData[input.id]
+                            : ""
+                        }
+                      >
+                        <option value="" disabled>
+                          Select {input.label}
                         </option>
-                      ))}
-                    </select>
-                  ) : (
-                    <input
-                      className="formInput"
-                      id={input.id}
-                      type={input.type}
-                      placeholder={input.placeholder}
-                      onChange={handleInput}
-                      value={
-                        userData && userData[input.id] ? userData[input.id] : ""
-                      } // Check if userData and userData[input.id] are not null
-                    />
-                  )}
-                </div>
-              ))}
+                        {input.options.map((option, index) => (
+                          <option key={index} value={option.value}>
+                            {option.text}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        className="formInput"
+                        id={input.id}
+                        type={input.type}
+                        placeholder={input.placeholder}
+                        onChange={handleInput}
+                        value={
+                          userData && userData[input.id]
+                            ? userData[input.id]
+                            : ""
+                        }
+                      />
+                    )}
+                  </div>
+                ))}
+
               <button
                 disabled={
                   userData && userData.per !== null && userData.per < 100

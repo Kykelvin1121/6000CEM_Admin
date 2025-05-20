@@ -10,18 +10,18 @@ const OrderTable = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    // LISTEN (REALTIME)
+    // Real-time listener for Firestore "orders" collection
     const unsub = onSnapshot(
       collection(db, "orders"),
       (snapShot) => {
-        let list = [];
-        snapShot.docs.forEach((doc) => {
-          list.push({ id: doc.id, ...doc.data() });
-        });
+        const list = snapShot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
         setData(list);
       },
       (error) => {
-        console.log(error);
+        console.log("Error fetching orders:", error);
       }
     );
 
@@ -33,9 +33,9 @@ const OrderTable = () => {
   const handleDelete = async (id) => {
     try {
       await deleteDoc(doc(db, "orders", id));
-      setData(data.filter((item) => item.id !== id));
+      setData((prevData) => prevData.filter((item) => item.id !== id));
     } catch (err) {
-      console.log(err);
+      console.error("Failed to delete order:", err);
     }
   };
 
@@ -44,47 +44,66 @@ const OrderTable = () => {
       field: "action",
       headerName: "Action",
       width: 200,
-      renderCell: (params) => {
-        return (
-          <div className="cellAction">
-            {/* View button is hidden but present */}
-            <div className="viewButton" style={{ display: "none" }}>
-              View
-            </div>
-
-            <div
-              className="deleteButton"
-              onClick={() => handleDelete(params.row.id)}
-            >
-              Delete
-            </div>
-
-            <Link
-              to={`/order/edit/${params.row.id}`}
-              style={{ textDecoration: "none" }}
-            >
-              <div className="editButton">Edit</div>
-            </Link>
+      renderCell: (params) => (
+        <div className="cellAction">
+          <div className="viewButton" style={{ display: "none" }}>
+            View
           </div>
-        );
-      },
+          <div
+            className="deleteButton"
+            onClick={() => handleDelete(params.row.id)}
+          >
+            Delete
+          </div>
+          <Link
+            to={`/order/edit/${params.row.id}`}
+            style={{ textDecoration: "none" }}
+          >
+            <div className="editButton">Edit</div>
+          </Link>
+        </div>
+      ),
     },
   ];
 
-  const customOrderColumns = orderColumns.map((column) => {
-    if (column.field === "title" || column.field === "qty") {
-      return {
-        ...column,
+  // Hide warehouse column and add shippingAddress
+  const customOrderColumns = orderColumns
+    .map((col) => {
+      if (col.field === "warehouse") {
+        return { ...col, hide: true };
+      }
+      return col;
+    })
+    .concat([
+      {
+        field: "shippingAddress",
+        headerName: "Shipping Address",
+        width: 250,
         valueGetter: (params) => {
-          if (params.row.products && Array.isArray(params.row.products)) {
-            return params.row.products.map((product) => product[column.field]);
+          const addr = params.row.shippingAddress;
+          if (typeof addr === "string") return addr;
+          if (typeof addr === "object" && addr !== null) {
+            return `${addr.street || ""} ${addr.city || ""} ${addr.zip || ""}`.trim();
           }
-          return ""; // Return empty string if "products" is undefined or not array
+          return "";
         },
-      };
-    }
-    return column;
-  });
+      },
+    ])
+    .map((column) => {
+      if (column.field === "title" || column.field === "qty") {
+        return {
+          ...column,
+          valueGetter: (params) => {
+            const products = params.row.products;
+            if (Array.isArray(products)) {
+              return products.map((product) => product[column.field]).join(", ");
+            }
+            return "";
+          },
+        };
+      }
+      return column;
+    });
 
   return (
     <div className="datatable">

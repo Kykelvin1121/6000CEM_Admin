@@ -22,7 +22,6 @@ export const userColumns = [
             );
         },
     },
-    // Add other columns with adjusted widths
     {
         field: "username",
         headerName: "Username",
@@ -56,11 +55,7 @@ export const userColumns = [
         headerName: "Email",
         width: 200,
     },
-    {
-        field: "displayName",
-        headerName: "Full Name",
-        width: 200,
-    },
+    // "Full Name" column removed here (displayName)
     {
         field: "address",
         headerName: "Address",
@@ -91,7 +86,6 @@ export const productColumns = [
         field: "title",
         headerName: "Product Name",
         width: 150,
-
     },
     {
         field: "price",
@@ -123,7 +117,7 @@ export const productColumns = [
         headerName: "Product Status",
         width: 150,
     }
-]
+];
 
 export const orderColumns = [
     {
@@ -166,12 +160,11 @@ export const orderColumns = [
         headerName: "Order Date",
         width: 200,
         valueFormatter: (params) => {
-            // Assuming "timeStamp" is a Firestore timestamp
             if (params.value && params.value.toDate) {
                 const date = params.value.toDate();
-                return date.toLocaleString(); // Format the timestamp as a string
+                return date.toLocaleString();
             }
-            return ""; // Return an empty string if the timestamp is not valid
+            return "";
         },
     },
-]
+];
