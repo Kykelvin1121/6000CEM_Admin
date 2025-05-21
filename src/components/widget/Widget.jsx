@@ -1,3 +1,5 @@
+// src/components/widget/Widget.jsx
+
 import "./widget.scss";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
@@ -8,19 +10,19 @@ import ShowChartIcon from "@mui/icons-material/ShowChart";
 import { useEffect, useState } from "react";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../../firebase";
-import React from "react";
 import { Link } from "react-router-dom";
 
 const Widget = ({ type }) => {
-  const [amount, setAmount] = useState(null);
-  const [diff, setDiff] = useState(null);
-  let data = null;
+  const [amount, setAmount] = useState(0);
+  const [diff, setDiff] = useState(0);
+
+  let data;
 
   switch (type) {
     case "sales":
       data = {
         title: "SALES",
-        isMoney: false, // no RM for sales count
+        isMoney: false,
         link: "See all sales",
         query: "orders",
         icon: <ShowChartIcon className="icon" />,
@@ -60,70 +62,64 @@ const Widget = ({ type }) => {
   useEffect(() => {
     const fetchData = async () => {
       const today = new Date();
-      const lastMonth = new Date(new Date().setMonth(today.getMonth() - 1));
-      const prevMonth = new Date(new Date().setMonth(today.getMonth() - 2));
+      const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+      const prevMonth = new Date(today.getFullYear(), today.getMonth() - 2, 1);
 
-      if (data && data.query) {
-        const lastMonthQuery = query(
-          collection(db, data.query),
-          where("timeStamp", "<=", today),
-          where("timeStamp", ">", lastMonth)
+      const lastMonthQuery = query(
+        collection(db, data.query),
+        where("timeStamp", "<=", today),
+        where("timeStamp", ">", lastMonth)
+      );
+
+      const prevMonthQuery = query(
+        collection(db, data.query),
+        where("timeStamp", "<=", lastMonth),
+        where("timeStamp", ">", prevMonth)
+      );
+
+      const lastMonthData = await getDocs(lastMonthQuery);
+      const prevMonthData = await getDocs(prevMonthQuery);
+
+      let newAmount = 0;
+      let newDiff = 0;
+
+      if (type === "earning") {
+        const lastMonthEarnings = lastMonthData.docs.reduce(
+          (total, doc) => total + (doc.data().totalPrice || 0),
+          0
         );
-        const prevMonthQuery = query(
-          collection(db, data.query),
-          where("timeStamp", "<=", lastMonth),
-          where("timeStamp", ">", prevMonth)
+        const prevMonthEarnings = prevMonthData.docs.reduce(
+          (total, doc) => total + (doc.data().totalPrice || 0),
+          0
         );
-
-        const lastMonthData = await getDocs(lastMonthQuery);
-        const prevMonthData = await getDocs(prevMonthQuery);
-
-        let newAmount;
-        let newDiff;
-
-        if (type === "earning") {
-          const lastMonthEarnings = lastMonthData.docs.reduce(
-            (total, doc) => total + doc.data().totalPrice,
-            0
-          );
-
-          const prevMonthEarnings = prevMonthData.docs.reduce(
-            (total, doc) => total + doc.data().totalPrice,
-            0
-          );
-
-          newAmount = lastMonthEarnings;
-          newDiff =
-            ((lastMonthEarnings - prevMonthEarnings) / prevMonthEarnings) * 100;
-        } else {
-          // sales, orders, users
-          newAmount = lastMonthData.docs.length;
-          newDiff =
-            ((lastMonthData.docs.length - prevMonthData.docs.length) /
-              prevMonthData.docs.length) *
-            100;
-        }
-
-        setAmount(newAmount);
-        setDiff(newDiff);
+        newAmount = lastMonthEarnings;
+        newDiff =
+          prevMonthEarnings === 0
+            ? 0
+            : ((lastMonthEarnings - prevMonthEarnings) / prevMonthEarnings) * 100;
+      } else {
+        const lastCount = lastMonthData.docs.length;
+        const prevCount = prevMonthData.docs.length;
+        newAmount = lastCount;
+        newDiff =
+          prevCount === 0 ? 0 : ((lastCount - prevCount) / prevCount) * 100;
       }
+
+      setAmount(newAmount);
+      setDiff(newDiff);
     };
 
     fetchData();
-  }, [data, type]);
+  }, [type]);
 
   return (
     <div className="widget">
       <div className="left">
-        <span className="title">{data.title}</span>
+        <span className="title">{data?.title}</span>
         <span className="counter">
-          {data.isMoney
-            ? `RM ${amount}`
-            : type === "sales"
-            ? `${amount} Sales`
-            : amount}
+          {data?.isMoney ? `RM ${amount.toFixed(2)}` : amount}
         </span>
-        {data.link && (
+        {data?.link && (
           <Link to={`/${data.query}`}>
             <span className="link">{data.link}</span>
           </Link>
@@ -132,9 +128,9 @@ const Widget = ({ type }) => {
       <div className="right">
         <div className={`percentage ${diff < 0 ? "negative" : "positive"}`}>
           {diff < 0 ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
-          {diff?.toFixed(2)}%
+          {diff.toFixed(2)}%
         </div>
-        {data.icon}
+        {data?.icon}
       </div>
     </div>
   );
