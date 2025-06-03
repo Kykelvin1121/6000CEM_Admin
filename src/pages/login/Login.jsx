@@ -25,11 +25,7 @@ const Login = () => {
     }
 
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       dispatch({ type: "LOGIN", payload: user });
       navigate("/");
@@ -49,22 +45,22 @@ const Login = () => {
             type="email"
             placeholder="Email"
             value={formData.email}
-            onChange={(e) =>
-              setFormData({ ...formData, email: e.target.value })
-            }
+            onChange={(e) => {
+              setFormData({ ...formData, email: e.target.value });
+              if (error) setError("");
+            }}
           />
           <input
             type="password"
             placeholder="Password"
             value={formData.password}
-            onChange={(e) =>
-              setFormData({ ...formData, password: e.target.value })
-            }
+            onChange={(e) => {
+              setFormData({ ...formData, password: e.target.value });
+              if (error) setError("");
+            }}
           />
-          <button type="submit" disabled={error !== ""}>
-            Login
-          </button>
-          {error && <span>{error}</span>}
+          <button type="submit">Login</button>
+          {error && <span className="error-message">{error}</span>}
         </form>
       </div>
     </div>
