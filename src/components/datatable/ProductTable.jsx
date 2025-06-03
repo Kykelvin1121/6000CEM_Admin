@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { productColumns } from "../../datatablesource";
 import { Link } from "react-router-dom";
-import { collection, deleteDoc, doc, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase";
 
 const ProductTable = () => {
@@ -32,15 +32,7 @@ const ProductTable = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    try {
-      await deleteDoc(doc(db, "products", id));
-      setProducts(products.filter((product) => product.id !== id));
-    } catch (error) {
-      console.error(error);
-      alert("Error deleting product");
-    }
-  };
+  // handleDelete removed entirely
 
   const actionColumn = [
     {
@@ -50,12 +42,7 @@ const ProductTable = () => {
       renderCell: (params) => {
         return (
           <div className="cellAction">
-            <div
-              className="deleteButton"
-              onClick={() => handleDelete(params.row.id)}
-            >
-              Delete
-            </div>
+            {/* Delete button removed */}
             <Link
               to={`/product/edit/${params.row.id}`}
               style={{ textDecoration: "none" }}
@@ -71,7 +58,7 @@ const ProductTable = () => {
   // Mark warehouse quantity columns as hidden
   const customProductColumns = productColumns.map((col) => {
     if (["wh1qty", "wh2qty", "wh3qty"].includes(col.field)) {
-      return { ...col, hide: true }; // ✅ keep it but hide it
+      return { ...col, hide: true }; // keep but hidden
     }
     return col;
   });

@@ -3,7 +3,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { userColumns } from "../../datatablesource";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { collection, deleteDoc, doc, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase";
 
 const DataTable = () => {
@@ -30,14 +30,7 @@ const DataTable = () => {
     };
   }, []);
 
-  const handleDelete = async (id) => {
-    try {
-      await deleteDoc(doc(db, "users", id));
-      setData(data.filter((item) => item.id !== id));
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  // Deleted handleDelete function entirely
 
   const actionColumn = [
     {
@@ -53,12 +46,7 @@ const DataTable = () => {
             >
               <div className="viewButton">View</div>
             </Link>
-            <div
-              className="deleteButton"
-              onClick={() => handleDelete(params.row.id)}
-            >
-              Delete
-            </div>
+            {/* Delete button removed */}
             <Link
               to={`/users/edit/${params.row.id}`}
               style={{ textDecoration: "none" }}
@@ -70,6 +58,7 @@ const DataTable = () => {
       },
     },
   ];
+
   return (
     <div className="datatable">
       <div className="datatableTitle">

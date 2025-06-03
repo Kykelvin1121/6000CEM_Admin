@@ -2,7 +2,7 @@ import "./ordertable.scss";
 import { DataGrid } from "@mui/x-data-grid";
 import { orderColumns } from "../../datatablesource";
 import { useEffect, useState } from "react";
-import { collection, deleteDoc, doc, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase";
 import { Link } from "react-router-dom";
 
@@ -30,15 +30,6 @@ const OrderTable = () => {
     };
   }, []);
 
-  const handleDelete = async (id) => {
-    try {
-      await deleteDoc(doc(db, "orders", id));
-      setData((prevData) => prevData.filter((item) => item.id !== id));
-    } catch (err) {
-      console.error("Failed to delete order:", err);
-    }
-  };
-
   const actionColumn = [
     {
       field: "action",
@@ -46,15 +37,6 @@ const OrderTable = () => {
       width: 200,
       renderCell: (params) => (
         <div className="cellAction">
-          <div className="viewButton" style={{ display: "none" }}>
-            View
-          </div>
-          <div
-            className="deleteButton"
-            onClick={() => handleDelete(params.row.id)}
-          >
-            Delete
-          </div>
           <Link
             to={`/order/edit/${params.row.id}`}
             style={{ textDecoration: "none" }}
@@ -66,7 +48,7 @@ const OrderTable = () => {
     },
   ];
 
-  // Custom columns: filter out hidden, override values, and add shippingAddress
+  // Custom columns: hide some fields, modify some values, and add shippingAddress
   const customOrderColumns = orderColumns
     .map((col) => {
       if (col.field === "selectedWarehouse") {
@@ -74,7 +56,7 @@ const OrderTable = () => {
       }
       return col;
     })
-    .filter((col) => !col.hide) // filter out hidden columns
+    .filter((col) => !col.hide)
     .map((col) => {
       if (col.field === "title" || col.field === "qty") {
         return {
