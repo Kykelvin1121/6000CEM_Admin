@@ -60,11 +60,11 @@ const EditForm = ({ title, collectionName, formConfig, showImageUpload }) => {
         const userDocRef = doc(db, collectionName, paramId);
         // Update the document with the new user data
         await updateDoc(userDocRef, docData);
-        toast.success("User info updated");
+        toast.success("Info updated");
         // You can also navigate to another page or perform other actions here if needed.
       } catch (error) {
         console.error("Error updating user data:", error);
-        toast.error("Error updating user info");
+        toast.error("Error updating info");
         // Handle any errors that occur during the update.
       }
     }

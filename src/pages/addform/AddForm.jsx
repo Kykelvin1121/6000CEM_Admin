@@ -19,7 +19,7 @@ const AddForm = ({ inputs, title, collectionName }) => {
   useEffect(() => {
     const uploadFile = () => {
       const name = new Date().getTime() + file.name;
-      const storageRef = ref(storage, name); // Use 'name' instead of 'file.name'
+      const storageRef = ref(storage, name);
       const uploadTask = uploadBytesResumable(storageRef, file);
 
       uploadTask.on(
@@ -29,16 +29,6 @@ const AddForm = ({ inputs, title, collectionName }) => {
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           console.log("Upload is " + progress + "% done");
           setPerc(progress);
-          switch (snapshot.state) {
-            case "paused":
-              console.log("Upload is paused");
-              break;
-            case "running":
-              console.log("Upload is running");
-              break;
-            default:
-              break;
-          }
         },
         (error) => {
           console.log(error);
@@ -66,8 +56,8 @@ const AddForm = ({ inputs, title, collectionName }) => {
 
   const handleAdd = async (e) => {
     e.preventDefault();
-    let isEmptyField = false; // Flag to check if any field is empty
 
+    let isEmptyField = false;
     for (const input of inputs) {
       const key = input.id;
       if (!data[key]) {
@@ -77,10 +67,8 @@ const AddForm = ({ inputs, title, collectionName }) => {
     }
 
     if (isEmptyField) {
-      // Display a toast message
       toast.error("Please fill in all fields");
     } else {
-      // All fields are filled, proceed with form submission
       try {
         await addDoc(collection(db, collectionName), {
           ...data,
@@ -92,7 +80,6 @@ const AddForm = ({ inputs, title, collectionName }) => {
       }
     }
   };
-
 
   return (
     <div className="new">
@@ -134,14 +121,14 @@ const AddForm = ({ inputs, title, collectionName }) => {
                     <select
                       id={input.id}
                       onChange={handleInput}
-                      defaultValue="" // Set a default value (empty option) to force the user to choose
+                      defaultValue=""
                     >
                       <option value="" disabled>
                         Select {input.label}
                       </option>
                       {input.options.map((option, index) => (
-                        <option key={index} value={option}>
-                          {option}
+                        <option key={index} value={option.value}>
+                          {option.text}
                         </option>
                       ))}
                     </select>
@@ -155,6 +142,7 @@ const AddForm = ({ inputs, title, collectionName }) => {
                   )}
                 </div>
               ))}
+
               <button disabled={per !== null && per < 100} type="submit">
                 Upload
               </button>

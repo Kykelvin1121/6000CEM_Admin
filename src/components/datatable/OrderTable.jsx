@@ -10,7 +10,6 @@ const OrderTable = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    // Real-time listener for Firestore "orders" collection
     const unsub = onSnapshot(
       collection(db, "orders"),
       (snapShot) => {
@@ -18,16 +17,14 @@ const OrderTable = () => {
           id: doc.id,
           ...doc.data(),
         }));
+        console.log("Orders fetched:", list); // Debug: see if username exists
         setData(list);
       },
       (error) => {
         console.log("Error fetching orders:", error);
       }
     );
-
-    return () => {
-      unsub();
-    };
+    return () => unsub();
   }, []);
 
   const actionColumn = [
@@ -48,16 +45,13 @@ const OrderTable = () => {
     },
   ];
 
-  // Custom columns: hide some fields, modify some values, and add shippingAddress
   const customOrderColumns = orderColumns
     .map((col) => {
       if (col.field === "selectedWarehouse") {
         return { ...col, hide: true };
       }
-      return col;
-    })
-    .filter((col) => !col.hide)
-    .map((col) => {
+
+      // Special handling for array fields
       if (col.field === "title" || col.field === "qty") {
         return {
           ...col,
@@ -70,8 +64,18 @@ const OrderTable = () => {
           },
         };
       }
+
+      // Ensure username fallback if undefined
+      if (col.field === "username") {
+        return {
+          ...col,
+          valueGetter: (params) => params.row.username || "Unknown",
+        };
+      }
+
       return col;
     })
+    .filter((col) => !col.hide)
     .concat([
       {
         field: "shippingAddress",
@@ -89,7 +93,7 @@ const OrderTable = () => {
     ]);
 
   return (
-    <div className="datatable">
+    <div className="ordertable">
       <div className="tableTitle">Order List</div>
       <DataGrid
         className="datagrid"

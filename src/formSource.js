@@ -98,9 +98,9 @@ export const userUpdate = [
 export const productInputs = [
   {
     id: "title",
-    label: "Title",
+    label: "Product",
     type: "text",
-    placeholder: "Apple MacBook Pro",
+    placeholder: "Product Name",
   },
   {
     id: "desc",
