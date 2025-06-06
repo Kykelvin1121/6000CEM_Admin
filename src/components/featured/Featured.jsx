@@ -60,7 +60,7 @@ const Featured = () => {
   return (
     <div className="featured">
       <div className="top">
-        <h1 className="title">Total Revenue</h1>
+        <h1 className="title">Total Sales</h1>
         <MoreVertIcon fontSize="small" />
       </div>
       <div className="bottom">
@@ -76,7 +76,7 @@ const Featured = () => {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         })}`}</p>
-        <p className="desc">{`Total Revenue: RM ${totalRevenueAllTime.toLocaleString(undefined, {
+        <p className="desc">{`Total Sales: RM ${totalRevenueAllTime.toLocaleString(undefined, {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         })}`}</p>

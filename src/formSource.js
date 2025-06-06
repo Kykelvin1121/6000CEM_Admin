@@ -68,12 +68,6 @@ export const userUpdate = [
     placeholder: "+60",
   },
   {
-    id: "password",
-    label: "Password",
-    type: "password",
-    placeholder: "Enter new password",
-  },
-  {
     id: "address",
     label: "Address",
     type: "text",
@@ -110,19 +104,7 @@ export const productInputs = [
   },
   {
     id: "wh1qty",
-    label: "Warehouse 1 Unit",
-    type: "number",
-    placeholder: "0",
-  },
-  {
-    id: "wh2qty",
-    label: "Warehouse 2 Unit",
-    type: "number",
-    placeholder: "0",
-  },
-  {
-    id: "wh3qty",
-    label: "Warehouse 3 Unit",
+    label: "Quantity",
     type: "number",
     placeholder: "0",
   },
@@ -167,18 +149,6 @@ export const productUpdate = [
     placeholder: "0",
   },
   {
-    id: "wh2qty",
-    label: "Warehouse 2 Unit",
-    type: "number",
-    placeholder: "0",
-  },
-  {
-    id: "wh3qty",
-    label: "Warehouse 3 Unit",
-    type: "number",
-    placeholder: "0",
-  },
-  {
     id: "price",
     label: "Price",
     type: "number",
@@ -207,7 +177,28 @@ export const orderUpdate = [
     readOnly: true,
     placeholder: "Auto-generated",
   },
+    {
+    id: "username",
+    label: "Username",
+    type: "text",
+    readOnly: true,
+    placeholder: "Auto-generated",
+  },
   {
+    id: "shippingAddress",
+    label: "Shipping Address",
+    type: "text",
+    readOnly: true,
+    placeholder: "Auto-generated",
+  },
+  {
+    id: "totalPrice",
+    label: "Total Paid",
+    type: "text",
+    readOnly: true,
+    placeholder: "Auto-calculated",
+  },
+    {
     id: "status",
     label: "Status",
     type: "select",
@@ -217,18 +208,5 @@ export const orderUpdate = [
       { text: "Completed", value: "completed" },
     ],
     placeholder: "Select status",
-  },
-  {
-    id: "shippingAddress",
-    label: "Shipping Address",
-    type: "text",
-    placeholder: "Enter shipping address",
-  },
-  {
-    id: "totalPrice",
-    label: "Total Paid",
-    type: "text",
-    readOnly: true,
-    placeholder: "Auto-calculated",
   },
 ];

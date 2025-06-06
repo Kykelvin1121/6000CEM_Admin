@@ -1,10 +1,8 @@
-// src/components/widget/Widget.jsx
-
 import "./widget.scss";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import ShowChartIcon from "@mui/icons-material/ShowChart";
+import ReceiptIcon from '@mui/icons-material/Receipt';
 import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase";
@@ -16,16 +14,25 @@ const Widget = ({ type }) => {
   let data;
 
   switch (type) {
-    case "sales":
+        case "users":
       data = {
-        title: "SALES",
+        title: "USERS",
         isMoney: false,
-        link: "See all sales",
-        query: "orders",
-        icon: <ShowChartIcon className="icon" />,
+        link: "See all users",
+        query: "users",
+        icon: <PersonOutlineIcon className="icon" />,
       };
       break;
-    case "orders":
+    case "order":
+      data = {
+        title: "ORDER",
+        isMoney: false,
+        link: "See all order",
+        query: "orders",
+        icon: <ReceiptIcon className="icon" />,
+      };
+      break;
+    case "product":
       data = {
         title: "PRODUCT LISTED",
         isMoney: false,
@@ -41,15 +48,6 @@ const Widget = ({ type }) => {
         link: false,
         query: "orders",
         icon: <MonetizationOnIcon className="icon" />,
-      };
-      break;
-    case "users":
-      data = {
-        title: "USERS",
-        isMoney: false,
-        link: "See all users",
-        query: "users",
-        icon: <PersonOutlineIcon className="icon" />,
       };
       break;
     default:

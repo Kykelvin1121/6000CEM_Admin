@@ -100,7 +100,7 @@ export const productColumns = [
   },
   {
     field: "quantity",
-    headerName: "Total Quantity",
+    headerName: "Quantity",
     width: 100,
     hide: true,
   },

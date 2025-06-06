@@ -18,68 +18,53 @@ const EditForm = ({ title, collectionName, formConfig, showImageUpload }) => {
         const docRef = doc(db, collectionName, paramId);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          const docData = docSnap.data();
-          setDocData(docData);
-        } else {
-          // Handle the case where the document doesn't exist
+          setDocData(docSnap.data());
         }
       }
     };
-
     fetchData();
   }, [collectionName, paramId]);
 
-  // Define a handler function to update the form data
   const handleInput = (e) => {
     const { id, value, type } = e.target;
     let parsedValue = value;
 
-    // If the input type is number or integer, parse the value as an integer
     if (type === "number" || type === "integer") {
-      parsedValue = parseInt(value, 10); // Parse the value as an integer with base 10
-      if (isNaN(parsedValue)) {
-        // Handle invalid input, e.g., non-numeric values
-        parsedValue = 0; // You can set a default value or handle the error as needed
-      }
+      parsedValue = parseInt(value, 10);
+      if (isNaN(parsedValue)) parsedValue = 0;
     }
 
-    // Update the docData state with the new value
     setDocData({
       ...docData,
       [id]: parsedValue,
     });
   };
 
-  // Define a handler function for form submission
   const handleAdd = async (e) => {
     e.preventDefault();
-
-    // Add code to submit the updated user data to your database
     if (docData && paramId) {
       try {
         const userDocRef = doc(db, collectionName, paramId);
-        // Update the document with the new user data
         await updateDoc(userDocRef, docData);
         toast.success("Info updated");
-        // You can also navigate to another page or perform other actions here if needed.
       } catch (error) {
         console.error("Error updating user data:", error);
         toast.error("Error updating info");
-        // Handle any errors that occur during the update.
       }
     }
     navigate(-1);
   };
 
-  const goBack = () => {
-    navigate(-1); // This will navigate back to the previous page
-  };
+  const goBack = () => navigate(-1);
+
+  const isLowStock = docData?.quantity !== undefined && docData.quantity < 5;
 
   return (
     <div className="new">
-      <div className="newContainer">
+      <div className={`newContainer ${isLowStock ? "lowStockHighlight" : ""}`}>
         <div className="top">
           <h1>{title}</h1>
+          {isLowStock && <span className="lowStockWarning">⚠️ Quantity Low!</span>}
         </div>
         <button className="goBack-edit" onClick={goBack}>
           Go Back
@@ -119,10 +104,8 @@ const EditForm = ({ title, collectionName, formConfig, showImageUpload }) => {
                       className="edit-select"
                       id={input.id}
                       onChange={handleInput}
-                      value={
-                        docData && docData[input.id] ? docData[input.id] : ""
-                      } // Check if docData and docData[input.id] are not null
-                      disabled={input.readOnly ? true : false} // Check if readOnly is true
+                      value={docData?.[input.id] || ""}
+                      disabled={input.readOnly}
                     >
                       <option value="" disabled>
                         Select {input.label}
@@ -140,21 +123,14 @@ const EditForm = ({ title, collectionName, formConfig, showImageUpload }) => {
                       type={input.type}
                       placeholder={input.placeholder}
                       onChange={handleInput}
-                      value={
-                        docData && docData[input.id] ? docData[input.id] : ""
-                      } // Check if docData and docData[input.id] are not null
-                      readOnly={input.readOnly ? true : false} // Check if readOnly is true
+                      value={docData?.[input.id] || ""}
+                      readOnly={input.readOnly}
                     />
                   )}
                 </div>
               ))}
               <br />
-              <button
-                disabled={docData && docData.per !== null && docData.per < 100}
-                type="submit"
-              >
-                Update
-              </button>
+              <button type="submit">Update</button>
             </form>
           </div>
         </div>
