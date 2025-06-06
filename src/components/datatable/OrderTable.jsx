@@ -17,7 +17,7 @@ const OrderTable = () => {
           id: doc.id,
           ...doc.data(),
         }));
-        console.log("Orders fetched:", list); // Debug: see if username exists
+        console.log("Orders fetched:", list);
         setData(list);
       },
       (error) => {
@@ -51,7 +51,6 @@ const OrderTable = () => {
         return { ...col, hide: true };
       }
 
-      // Special handling for array fields
       if (col.field === "title" || col.field === "qty") {
         return {
           ...col,
@@ -65,7 +64,6 @@ const OrderTable = () => {
         };
       }
 
-      // Ensure username fallback if undefined
       if (col.field === "username") {
         return {
           ...col,
@@ -93,7 +91,7 @@ const OrderTable = () => {
     ]);
 
   return (
-    <div className="ordertable">
+    <div className="datatable">
       <div className="tableTitle">Order List</div>
       <DataGrid
         className="datagrid"

@@ -87,8 +87,8 @@ const Chart = () => {
             type="monotone"
             dataKey="revenue"
             stackId="1"
-            stroke="#82ca9d"
-            fill="#82ca9d"
+            stroke="#13D0FF"
+            fill="#13D0FF"
           />
         </AreaChart>
       </ResponsiveContainer>

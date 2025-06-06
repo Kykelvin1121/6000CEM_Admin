@@ -70,12 +70,25 @@
         }
 
         .editButton {
-            padding: 2px 5px;
+            padding: 5px 10px;
             border-radius: 5px;
-            color: #ff7b00;
-            border: 1px dotted rgba(220, 20, 60, 0.6);
+            color: #ED7303;
+            background-color: transparent;
             cursor: pointer;
+            border: none;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
         }
+        .viewButton:hover,.editButton:hover {
+            background-color: rgba(0, 0, 139, 0.1);
+    }         
+    }
 
+}
+.dark {
+    color: #ccc;
+
+    .tableTitle {
+      color: #aaa;
     }
 }
