@@ -31,6 +31,11 @@ export const userColumns = [
     headerName: "Username",
     width: 200,
   },
+    {
+    field: "phoneNumber",
+    headerName: "Phone Number",
+    width: 200,
+  },
   {
     field: "role",
     headerName: "Role",

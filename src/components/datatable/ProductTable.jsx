@@ -19,9 +19,7 @@ const ProductTable = () => {
           id: doc.id,
           ...doc.data(),
           quantity:
-            (doc.data().wh1qty || 0) +
-            (doc.data().wh2qty || 0) +
-            (doc.data().wh3qty || 0),
+            (doc.data().wh1qty || 0),
         }));
         setProducts(products);
       });
@@ -42,7 +40,6 @@ const ProductTable = () => {
       renderCell: (params) => {
         return (
           <div className="cellAction">
-            {/* Delete button removed */}
             <Link
               to={`/product/edit/${params.row.id}`}
               style={{ textDecoration: "none" }}

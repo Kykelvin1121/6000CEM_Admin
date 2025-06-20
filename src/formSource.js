@@ -15,7 +15,7 @@ export const userInputs = [
     placeholder: "Enter email",
   },
   {
-    id: "phone",
+    id: "phoneNumber",
     label: "Phone",
     type: "text",
     placeholder: "+60",
