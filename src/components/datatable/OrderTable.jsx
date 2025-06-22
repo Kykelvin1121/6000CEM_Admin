@@ -92,7 +92,7 @@ const OrderTable = () => {
 
   return (
     <div className="datatable">
-      <div className="tableTitle">Order List</div>
+      <div className="datatableTitle">Order List</div>
       <DataGrid
         className="datagrid"
         rows={data}

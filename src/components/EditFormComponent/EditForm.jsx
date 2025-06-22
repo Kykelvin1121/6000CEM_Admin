@@ -83,8 +83,8 @@ const EditForm = ({ title, collectionName, formConfig, showImageUpload }) => {
             <form onSubmit={handleAdd}>
               {showImageUpload && (
                 <div className="formInput">
-                  <label htmlFor="file">
-                    Image: <DriveFolderUploadOutlinedIcon className="icon" />
+                  <label htmlFor="file" className="uploadLabel">
+                    Upload Image <DriveFolderUploadOutlinedIcon className="icon" />
                   </label>
                   <input
                     type="file"

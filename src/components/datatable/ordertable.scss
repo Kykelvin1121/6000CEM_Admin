@@ -1,8 +1,8 @@
-.ordertable {
+.datatable {
     height: 600px;
     padding: 20px;
 
-    .tableTitle {
+    .datatableTitle {
         width: 100%;
         font-size: 24px;
         color: gray;
@@ -79,9 +79,10 @@
             font-weight: 600;
             transition: background-color 0.3s ease;
         }
-        .viewButton:hover,.editButton:hover {
-            background-color: rgba(0, 0, 139, 0.1);
-    }         
-    }
 
+        .viewButton:hover,
+        .editButton:hover {
+            background-color: rgba(0, 0, 139, 0.1);
+        }
+    }
 }

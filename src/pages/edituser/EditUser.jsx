@@ -5,9 +5,10 @@ import Navbar from "../../components/navbar/Navbar";
 import { useParams, useNavigate } from "react-router-dom";
 import { db } from "../../firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import profileIcon from "../../images/pfpicon.png";
 import DriveFolderUploadOutlinedIcon from "@mui/icons-material/DriveFolderUploadOutlined";
-import { userUpdate } from "../../formSource"; // adjust path if needed
+import { userUpdate } from "../../formSource";
 import { toast } from "react-toastify";
 
 const EditUser = ({ title }) => {
@@ -21,8 +22,6 @@ const EditUser = ({ title }) => {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         setUserData(docSnap.data());
-      } else {
-        // handle user not found case
       }
     };
     fetchUserData();
@@ -37,17 +36,47 @@ const EditUser = ({ title }) => {
 
   const handleAdd = async (e) => {
     e.preventDefault();
+
     if (userData && userId) {
       try {
+        let updatedData = { ...userData };
+
+        // Handle image upload if new file is selected
+        if (userData.file) {
+          const storage = getStorage();
+          const fileName = `${new Date().getTime()}_${userData.file.name}`;
+          const storageRef = ref(storage, `userImages/${fileName}`);
+          const uploadTask = uploadBytesResumable(storageRef, userData.file);
+
+          await new Promise((resolve, reject) => {
+            uploadTask.on(
+              "state_changed",
+              null,
+              (error) => {
+                console.error("Upload failed:", error);
+                toast.error("Image upload failed");
+                reject(error);
+              },
+              async () => {
+                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                updatedData.img = downloadURL;
+                delete updatedData.file;
+                resolve();
+              }
+            );
+          });
+        }
+
+        // Update user data in Firestore
         const userDocRef = doc(db, "users", userId);
-        await updateDoc(userDocRef, userData);
+        await updateDoc(userDocRef, updatedData);
         toast.success("User info updated");
+        navigate(-1);
       } catch (error) {
         console.error("Error updating user data:", error);
         toast.error("Error updating user info");
       }
     }
-    navigate(-1);
   };
 
   const goBack = () => {
@@ -68,14 +97,17 @@ const EditUser = ({ title }) => {
         <div className="bottom">
           <div className="left">
             <img
-              src={userData?.img || profileIcon}
+              src={
+                userData?.file
+                  ? URL.createObjectURL(userData.file)
+                  : userData?.img || profileIcon
+              }
               alt={userData?.username || "User Profile"}
               className="item avatar"
             />
-            {/* Upload image button moved here */}
-            <div className="formInput uploadImage">
+            <div className="uploadButtonWrapper">
               <label htmlFor="file">
-                Image: <DriveFolderUploadOutlinedIcon className="icon" />
+                Upload Image <DriveFolderUploadOutlinedIcon className="icon" />
               </label>
               <input
                 type="file"
@@ -89,10 +121,7 @@ const EditUser = ({ title }) => {
           </div>
           <div className="right">
             <form onSubmit={handleAdd}>
-              {/* Removed image upload input from here */}
-
               {userUpdate
-                // filter out name, surname, country if somehow still present
                 .filter((input) => !["name", "surname", "country"].includes(input.id))
                 .map((input) => (
                   <div className="formInput" key={input.id}>
@@ -126,12 +155,7 @@ const EditUser = ({ title }) => {
                   </div>
                 ))}
 
-              <button
-                disabled={userData && userData.per !== null && userData.per < 100}
-                type="submit"
-              >
-                Update
-              </button>
+              <button type="submit">Update</button>
             </form>
           </div>
         </div>

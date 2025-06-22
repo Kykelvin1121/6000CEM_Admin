@@ -8,12 +8,12 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { useNavigate } from "react-router-dom";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 const AddForm = ({ inputs, title, collectionName }) => {
   const [file, setFile] = useState("");
   const [data, setData] = useState({});
   const [per, setPerc] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,15 +32,20 @@ const AddForm = ({ inputs, title, collectionName }) => {
         },
         (error) => {
           console.log(error);
+          toast.error("Image upload failed");
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             setData((prev) => ({ ...prev, img: downloadURL }));
+            toast.success("Image uploaded successfully");
           });
         }
       );
     };
-    file && uploadFile();
+
+    if (file) {
+      uploadFile();
+    }
   }, [file]);
 
   const handleInput = (e) => {
@@ -48,7 +53,8 @@ const AddForm = ({ inputs, title, collectionName }) => {
     let value = e.target.value;
 
     if (e.target.type === "number") {
-      value = parseInt(value, 10);
+      const num = parseInt(value, 10);
+      value = isNaN(num) || num < 1 ? 1 : num;
     }
 
     setData({ ...data, [id]: value });
@@ -57,27 +63,46 @@ const AddForm = ({ inputs, title, collectionName }) => {
   const handleAdd = async (e) => {
     e.preventDefault();
 
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
     let isEmptyField = false;
     for (const input of inputs) {
       const key = input.id;
-      if (!data[key]) {
+      const value = data[key];
+      if (!value || value.toString().trim() === "") {
         isEmptyField = true;
         break;
       }
     }
 
     if (isEmptyField) {
+      toast.dismiss();
       toast.error("Please fill in all fields");
-    } else {
-      try {
-        await addDoc(collection(db, collectionName), {
-          ...data,
-          timeStamp: serverTimestamp(),
-        });
-        navigate(-1);
-      } catch (err) {
-        console.error(err);
-      }
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (file && per !== null && per < 100) {
+      toast.dismiss();
+      toast.error("Please wait for the image to finish uploading");
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, collectionName), {
+        ...data,
+        timeStamp: serverTimestamp(),
+      });
+      toast.success("Product added successfully");
+      navigate(-1);
+    } catch (err) {
+      console.error(err);
+      toast.dismiss();
+      toast.error("Failed to add Product");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -97,23 +122,22 @@ const AddForm = ({ inputs, title, collectionName }) => {
                   ? URL.createObjectURL(file)
                   : "https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg"
               }
-              alt=""
+              alt="Preview"
             />
+            <div className="uploadButtonWrapper">
+              <label htmlFor="file" className="uploadLabel">
+                Upload Image <DriveFolderUploadOutlinedIcon className="icon" />
+              </label>
+              <input
+                type="file"
+                id="file"
+                onChange={(e) => setFile(e.target.files[0])}
+                style={{ display: "none" }}
+              />
+            </div>
           </div>
           <div className="right">
             <form onSubmit={handleAdd}>
-              <div className="formInput">
-                <label htmlFor="file">
-                  Image: <DriveFolderUploadOutlinedIcon className="icon" />
-                </label>
-                <input
-                  type="file"
-                  id="file"
-                  onChange={(e) => setFile(e.target.files[0])}
-                  style={{ display: "none" }}
-                />
-              </div>
-
               {inputs.map((input) => (
                 <div className="formInput" key={input.id}>
                   <label>{input.label}</label>
@@ -138,12 +162,16 @@ const AddForm = ({ inputs, title, collectionName }) => {
                       type={input.type}
                       placeholder={input.placeholder}
                       onChange={handleInput}
+                      min={input.type === "number" ? 1 : undefined}
                     />
                   )}
                 </div>
               ))}
 
-              <button disabled={per !== null && per < 100} type="submit">
+              <button
+                disabled={(file && per !== null && per < 100) || isSubmitting}
+                type="submit"
+              >
                 Upload
               </button>
             </form>

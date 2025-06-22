@@ -14,9 +14,12 @@ const New = ({ inputs, title }) => {
   const [file, setFile] = useState(null);
   const [data, setData] = useState({});
   const [per, setPerc] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!file) return;
+
     const uploadFile = () => {
       const name = new Date().getTime() + file.name;
       const storageRef = ref(storage, name);
@@ -52,39 +55,37 @@ const New = ({ inputs, title }) => {
       );
     };
 
-    if (file) {
-      uploadFile();
-    }
+    uploadFile();
   }, [file]);
 
   const handleInput = (e) => {
     const id = e.target.id;
     const value = e.target.value;
-
-    setData({ ...data, [id]: value });
+    setData((prev) => ({ ...prev, [id]: value }));
   };
 
   const handleAdd = async (e) => {
     e.preventDefault();
 
-    // Validate all inputs from props 'inputs'
-    let isEmptyField = false;
-    for (const input of inputs) {
-      const key = input.id;
-      if (!data[key]) {
-        isEmptyField = true;
-        break;
-      }
-    }
+    if (isSubmitting) return; // 🛡️ Block double submission
+    setIsSubmitting(true);    // 🔒 Lock during submission
 
-    if (isEmptyField) {
+    const emptyFields = inputs.filter((input) => {
+      const value = data[input.id];
+      return !value || value.trim() === "";
+    });
+
+    if (emptyFields.length > 0) {
+      toast.dismiss();
       toast.error("Please fill in all required fields");
+      setIsSubmitting(false);
       return;
     }
 
-    // Prevent submitting if an upload is in progress
     if (file && per !== null && per < 100) {
+      toast.dismiss();
       toast.error("Please wait for the image to finish uploading");
+      setIsSubmitting(false);
       return;
     }
 
@@ -102,7 +103,10 @@ const New = ({ inputs, title }) => {
       navigate(-1);
     } catch (err) {
       console.log(err);
+      toast.dismiss();
       toast.error(err.message);
+    } finally {
+      setIsSubmitting(false); // 🔓 Unlock after attempt
     }
   };
 
@@ -124,7 +128,7 @@ const New = ({ inputs, title }) => {
                   ? data.img
                   : "https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg"
               }
-              alt=""
+              alt="Preview"
             />
             <div className="uploadButtonWrapper">
               <label htmlFor="file" className="uploadLabel">
@@ -172,7 +176,10 @@ const New = ({ inputs, title }) => {
                 </div>
               ))}
 
-              <button disabled={file && per !== null && per < 100} type="submit">
+              <button
+                disabled={file && per !== null && per < 100}
+                type="submit"
+              >
                 Create
               </button>
             </form>

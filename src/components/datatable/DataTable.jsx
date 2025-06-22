@@ -30,8 +30,6 @@ const DataTable = () => {
     };
   }, []);
 
-  // Deleted handleDelete function entirely
-
   const actionColumn = [
     {
       field: "action",
@@ -46,7 +44,6 @@ const DataTable = () => {
             >
               <div className="viewButton">View</div>
             </Link>
-            {/* Delete button removed */}
             <Link
               to={`/users/edit/${params.row.id}`}
               style={{ textDecoration: "none" }}

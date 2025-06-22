@@ -59,22 +59,8 @@ const Sidebar = () => {
               <span>Orders</span>
             </li>
           </Link>
-          {/* <Link to="/inventory" style={{ textDecoration: "none" }}>
-          <li>
-            <InventoryIcon className="icon" />
-            <span>Inventory</span>
-          </li>
-          </Link> */}
-          {/* <p className="title">DATA</p>
-          <li>
-            <QueryStatsIcon className="icon" />
-            <span>Status</span>
-          </li>
-          <li>
-            <AssessmentIcon className="icon" />
-            <span>Report</span>
-          </li> */}
-          <p className="title">USER</p>
+
+          <p className="title">PROFILE</p>
           <Link
             to={`/users/${currentUserID}`}
             style={{ textDecoration: "none" }}

@@ -30,8 +30,6 @@ const ProductTable = () => {
     }
   };
 
-  // handleDelete removed entirely
-
   const actionColumn = [
     {
       field: "action",
